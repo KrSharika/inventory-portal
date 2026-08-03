@@ -1,0 +1,23 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "sap": "readonly",
+    "jQuery": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "script"
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-unused-vars": ["warn", { "args": "none" }],
+    "no-console": "warn",
+    "quotes": ["warn", "double"],
+    "semi": ["error", "always"],
+    "no-var": "off",
+    "strict": ["error", "function"]
+  }
+}

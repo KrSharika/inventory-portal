@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaMart Inventory Portal</title>
+    <style>
+        html, body, #content {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-resourceroots='{"novamart.inventory": "./"}'
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted"
+    ></script>
+</head>
+<body class="sapUiBody" id="content">
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
+                new ComponentContainer({
+                    name: "novamart.inventory",
+                    height: "100%",
+                    settings: {
+                        id: "novamart.inventory"
+                    }
+                }).placeAt("content");
+            });
+        });
+    </script>
+</body>
+</html>

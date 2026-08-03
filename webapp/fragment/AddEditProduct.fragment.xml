@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+    xmlns:layout="sap.ui.layout.form">
+    <Dialog
+        title="{= ${temp>/__isNew} ? ${i18n>dialogAddTitle} : ${i18n>dialogEditTitle} }"
+        contentWidth="30rem">
+        <content>
+            <layout:SimpleForm editable="true" layout="ResponsiveGridLayout">
+                <Label text="{i18n>labelName}" required="true" />
+                <Input id="inputName" value="{temp>name}" />
+
+                <Label text="{i18n>labelCategory}" required="true" />
+                <Input id="inputCategory" value="{temp>category}" />
+
+                <Label text="{i18n>labelSku}" required="true" />
+                <Input id="inputSku" value="{temp>sku}" />
+
+                <Label text="{i18n>labelPrice}" required="true" />
+                <Input id="inputPrice" value="{path: 'temp>price', type: 'sap.ui.model.type.Float'}" />
+
+                <Label text="{i18n>labelCurrency}" />
+                <Select id="inputCurrency" selectedKey="{temp>currency}">
+                    <core:Item key="USD" text="USD" />
+                    <core:Item key="EUR" text="EUR" />
+                    <core:Item key="INR" text="INR" />
+                </Select>
+
+                <Label text="{i18n>labelStock}" required="true" />
+                <Input id="inputStock" value="{path: 'temp>stock', type: 'sap.ui.model.type.Integer'}" />
+
+                <Label text="{i18n>labelReorderThreshold}" />
+                <Input id="inputThreshold" value="{path: 'temp>reorderThreshold', type: 'sap.ui.model.type.Integer'}" />
+
+                <Label text="{i18n>labelSupplier}" />
+                <Input value="{temp>supplier}" />
+
+                <Label text="{i18n>labelWarehouse}" />
+                <Input value="{temp>warehouse}" />
+
+                <Label text="{i18n>labelDescription}" />
+                <TextArea value="{temp>description}" rows="3" />
+
+                <Label text="{i18n>labelImageUrl}" />
+                <Input value="{temp>imageUrl}" />
+
+                <Label text="{i18n>labelLastUpdated}" />
+                <DatePicker value="{temp>lastUpdated}" valueFormat="yyyy-MM-dd" displayFormat="medium" />
+            </layout:SimpleForm>
+        </content>
+        <buttons>
+            <Button text="{i18n>buttonSave}" type="Emphasized" press="onSaveProduct" />
+            <Button text="{i18n>buttonCancel}" press="onCancelProduct" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

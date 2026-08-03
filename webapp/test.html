@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        html, body, #content {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+    <script
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-libs="sap.f,sap.m"
+    ></script>
+</head>
+<body class="sapUiBody" id="content">
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            sap.ui.require(["sap/f/FlexibleColumnLayout", "sap/m/Page", "sap/m/Text"], function (FlexibleColumnLayout, Page, Text) {
+                var oPage = new Page({
+                    title: "Inside FCL",
+                    content: [ new Text({ text: "FCL rendering works." }) ]
+                });
+                var oFCL = new FlexibleColumnLayout({
+                    layout: "OneColumn",
+                    beginColumnPages: [oPage]
+                });
+                oFCL.placeAt("content");
+            });
+        });
+    </script>
+</body>
+</html>

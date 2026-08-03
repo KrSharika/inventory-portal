@@ -1,0 +1,78 @@
+
+<mvc:View
+    controllerName="novamart.inventory.controller.Detail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:layout="sap.ui.layout.form">
+    <Page
+        id="detailPage"
+        title="{i18n>detailPageTitle}"
+        showNavButton="{device>/system/phone}"
+        navButtonPress="onNavBack">
+        <content>
+            <ObjectHeader
+                title="{products>name}"
+                number="{
+                    parts: [
+                        {path: 'products>price'},
+                        {path: 'products>currency'}
+                    ],
+                    formatter: '.formatter.currencyValue'
+                }"
+                numberUnit="{products>currency}"
+                icon="sap-icon://product">
+                <attributes>
+                    <ObjectAttribute text="{products>category}" />
+                    <ObjectAttribute text="{products>sku}" />
+                </attributes>
+                <statuses>
+                    <ObjectStatus
+                        text="{
+                            parts: [
+                                {path: 'products>stock'},
+                                {path: 'products>reorderThreshold'},
+                                {path: 'i18n>statusAvailable'},
+                                {path: 'i18n>statusLowStock'},
+                                {path: 'i18n>statusOutOfStock'}
+                            ],
+                            formatter: '.formatter.statusText'
+                        }"
+                        state="{
+                            parts: [
+                                {path: 'products>stock'},
+                                {path: 'products>reorderThreshold'}
+                            ],
+                            formatter: '.formatter.statusState'
+                        }" />
+                </statuses>
+                </ObjectHeader>
+
+                <Toolbar>
+                    <ToolbarSpacer />
+                    <Button text="{i18n>buttonReorder}" icon="sap-icon://cart-3" press="onReorder" />
+                    <Button text="{i18n>buttonEdit}" icon="sap-icon://edit" press="onEditProduct" />
+                    <Button text="{i18n>buttonDelete}" icon="sap-icon://delete" type="Reject" press="onDeleteProduct" />
+                </Toolbar>
+
+            <layout:SimpleForm editable="false" layout="ResponsiveGridLayout">
+                <Label text="{i18n>labelDescription}" />
+                <Text text="{products>description}" />
+
+                <Label text="{i18n>labelSupplier}" />
+                <Text text="{products>supplier}" />
+
+                <Label text="{i18n>labelWarehouse}" />
+                <Text text="{products>warehouse}" />
+
+                <Label text="{i18n>labelStock}" />
+                <Text text="{products>stock}" />
+
+                <Label text="{i18n>labelReorderThreshold}" />
+                <Text text="{products>reorderThreshold}" />
+
+                <Label text="{i18n>labelLastUpdated}" />
+                <Text text="{path: 'products>lastUpdated', formatter: '.formatter.dateMedium'}" />
+            </layout:SimpleForm>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,101 @@
+
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "novamart.inventory",
+    "type": "application",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "applicationVersion": {
+      "version": "1.0.0"
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "sap-icon://retail-store-manager"
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "novamart.inventory.view.App",
+      "type": "XML",
+      "id": "app"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.ui.core": {},
+        "sap.m": {},
+        "sap.f": {},
+        "sap.ui.layout": {}
+      }
+    },
+    "handleValidation": true,
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "novamart.inventory.i18n.i18n",
+          "fallbackLocale": "en"
+        }
+      },
+      "products": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/products.json"
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.f.routing.Router",
+        "viewType": "XML",
+        "viewPath": "novamart.inventory.view",
+        "controlId": "fcl",
+        "controlAggregation": "beginColumnPages",
+        "bypassed": {
+          "target": ["list", "notFound"]
+      },
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "list",
+          "target": "list"
+        },
+        {
+          "pattern": "product/{productId}",
+          "name": "detail",
+          "target": ["list", "detail"]
+        },
+        {
+          "pattern": "notFound",
+          "name": "notFound",
+          "target": ["list", "notFound"]
+        }
+      ],
+      "targets": {
+        "list": {
+          "viewName": "List",
+          "viewId": "list",
+          "controlAggregation": "beginColumnPages"
+        },
+        "detail": {
+          "viewName": "Detail",
+          "viewId": "detail",
+          "controlAggregation": "midColumnPages"
+        },
+        "notFound": {
+          "viewName": "NotFound",
+          "viewId": "notFound",
+          "controlAggregation": "midColumnPages"
+        }
+      }
+    }
+  }
+}
