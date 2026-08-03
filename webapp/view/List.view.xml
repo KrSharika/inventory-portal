@@ -16,6 +16,15 @@
                 </contentLeft>
                 <contentRight>
                     <Text text="{= ${appView>/productCount} + ' ' + ${i18n>productCountLabel} }" />
+                    <Select
+                        id="languageSelect"
+                        selectedKey="{appView>/locale}"
+                        change="onLanguageChange"
+                        class="sapUiTinyMarginBegin"
+                        width="7rem">
+                        <core:Item key="en" text="English" />
+                        <core:Item key="de" text="Deutsch" />
+                    </Select>
                 </contentRight>
             </Bar>
         </customHeader>

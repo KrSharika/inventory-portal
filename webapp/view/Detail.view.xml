@@ -1,4 +1,3 @@
-
 <mvc:View
     controllerName="novamart.inventory.controller.Detail"
     xmlns:mvc="sap.ui.core.mvc"

@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/Device",
-    "sap/ui/model/json/JSONModel"
-], function (UIComponent, Device, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "./util/Storage"
+], function (UIComponent, Device, JSONModel, Storage) {
     "use strict";
 
     return UIComponent.extend("novamart.inventory.Component", {
@@ -12,6 +13,10 @@ sap.ui.define([
         },
 
         init: function () {
+            // apply any previously chosen theme before the shell renders
+            var sTheme = Storage.loadTheme("sap_horizon");
+            sap.ui.getCore().applyTheme(sTheme);
+
             UIComponent.prototype.init.apply(this, arguments);
 
             var oDeviceModel = new JSONModel(Device);
@@ -25,18 +30,25 @@ sap.ui.define([
             });
             this.setModel(oAppViewModel, "appView");
 
-            // "products" model is declared in manifest.json and auto-loads.
-            // Hook its load events so the busy indicator reflects real timing.
+            // "products" model is declared in manifest.json and auto-loads from
+            // model/products.json. If a persisted copy exists in localStorage
+            // (from a prior add/edit/delete/reorder), it overrides the JSON
+            // file so user changes survive a refresh.
             var oProductsModel = this.getModel("products");
-            var oExistingData = oProductsModel.getData();
 
-            if (oExistingData && oExistingData.products) {
-                // Data already loaded synchronously before init() ran — clear busy now
+            var fnApplyPersistedOverride = function () {
+                var aSaved = Storage.loadProducts();
+                if (aSaved) {
+                    oProductsModel.setProperty("/products", aSaved);
+                }
                 oAppViewModel.setProperty("/busy", false);
+            };
+
+            var oExistingData = oProductsModel.getData();
+            if (oExistingData && oExistingData.products) {
+                fnApplyPersistedOverride();
             } else {
-                oProductsModel.attachRequestCompleted(function () {
-                    oAppViewModel.setProperty("/busy", false);
-                });
+                oProductsModel.attachRequestCompleted(fnApplyPersistedOverride);
             }
 
             oProductsModel.attachRequestFailed(function () {

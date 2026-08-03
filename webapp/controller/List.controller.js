@@ -1,4 +1,3 @@
-
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/Filter",
@@ -6,8 +5,9 @@ sap.ui.define([
     "sap/ui/model/Sorter",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Fragment",
+    "sap/ui/model/resource/ResourceModel",
     "../model/formatter"
-], function (BaseController, Filter, FilterOperator, Sorter, JSONModel, Fragment, formatter) {
+], function (BaseController, Filter, FilterOperator, Sorter, JSONModel, Fragment, ResourceModel, formatter) {
     "use strict";
 
     return BaseController.extend("novamart.inventory.controller.List", {
@@ -19,7 +19,11 @@ sap.ui.define([
             var oProductsModel = this.getModel("products");
             this.setModel(oProductsModel, "products");
             this.setModel(this.getModel("appView"), "appView");
-            this.setModel(this.getModel("i18n"), "i18n");
+            // NOTE: do NOT do this.setModel(this.getModel("i18n"), "i18n") here.
+            // That locks this view to a specific i18n model instance and breaks
+            // propagation when onLanguageChange swaps the model on the Component.
+            // Leave "i18n" inherited from the owner Component so language
+            // switches reach this view (and its bindings) automatically.
 
             oProductsModel.attachRequestCompleted(this._updateCount.bind(this));
             this._updateCount();
@@ -27,6 +31,22 @@ sap.ui.define([
             this._oList = oList;
             this._aSearchFilters = [];
             this._aViewSettingsFilters = [];
+
+            this.getModel("appView").setProperty("/locale", "en");
+
+            this._oI18nModels = {
+                en: this.getOwnerComponent().getModel("i18n"),
+                de: new ResourceModel({
+                    bundleName: "novamart.inventory.i18n.i18n",
+                    bundleLocale: "de",
+                    fallbackLocale: "en"
+                })
+            };
+        },
+
+        onLanguageChange: function (oEvent) {
+            var sKey = oEvent.getParameter("selectedItem").getKey();
+            this.getOwnerComponent().setModel(this._oI18nModels[sKey], "i18n");
         },
 
         _updateCount: function () {
@@ -155,14 +175,17 @@ sap.ui.define([
                     controller: this
                 }).then(function (oDialog) {
                     oView.addDependent(oDialog);
+                    this._oDraftIndicator = Fragment.byId(oView.getId(), "draftIndicator");
+                    this.attachUnsavedChangesGuard(oDialog);
                     return oDialog;
-                });
+                }.bind(this));
             }
             this._pAddEditDialog.then(function (oDialog) {
                 oDialog.setModel(oTempModel, "temp");
                 oDialog.setBindingContext(oTempModel.createBindingContext("/"), "temp");
+                this.resetDraftState();
                 oDialog.open();
-            });
+            }.bind(this));
         },
 
         onSaveProduct: function (oEvent) {
@@ -191,13 +214,23 @@ sap.ui.define([
             oProductsModel.setProperty("/products", aProducts);
             oProductsModel.refresh(true);
             this._updateCount();
+            this.persistProducts();
+            this._bDialogDirty = false;
 
             sap.m.MessageToast.show(this.getResourceBundle().getText("msgSaved"));
             oDialog.close();
         },
 
         onCancelProduct: function (oEvent) {
-            oEvent.getSource().getParent().close();
+            var oDialog = oEvent.getSource().getParent();
+            if (this._bDialogDirty) {
+                this._confirmDiscardChanges().then(function () {
+                    this._bDialogDirty = false;
+                    oDialog.close();
+                }.bind(this), function () { /* stay open */ });
+            } else {
+                oDialog.close();
+            }
         },
 
         _validateProduct: function (oDialog) {

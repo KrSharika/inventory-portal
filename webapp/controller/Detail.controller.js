@@ -1,4 +1,3 @@
-
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
@@ -18,7 +17,6 @@ sap.ui.define([
         onInit: function () {
             this.setModel(this.getModel("products"), "products");
             this.setModel(this.getModel("appView"), "appView");
-            this.setModel(this.getModel("i18n"), "i18n");
             this.getRouter().getRoute("detail").attachPatternMatched(this._onRouteMatched, this);
         },
 
@@ -60,14 +58,17 @@ sap.ui.define([
                     controller: this
                 }).then(function (oDialog) {
                     oView.addDependent(oDialog);
+                    this._oDraftIndicator = Fragment.byId(oView.getId(), "draftIndicator");
+                    this.attachUnsavedChangesGuard(oDialog);
                     return oDialog;
-                });
+                }.bind(this));
             }
             this._pAddEditDialog.then(function (oDialog) {
                 oDialog.setModel(oTempModel, "temp");
                 oDialog.setBindingContext(oTempModel.createBindingContext("/"), "temp");
+                this.resetDraftState();
                 oDialog.open();
-            });
+            }.bind(this));
         },
 
         onSaveProduct: function (oEvent) {
@@ -83,13 +84,23 @@ sap.ui.define([
             var oProductsModel = this.getModel("products");
             oProductsModel.setProperty("/products/" + this._iIndex, oUpdated);
             oProductsModel.refresh(true);
+            this.persistProducts();
+            this._bDialogDirty = false;
 
             MessageToast.show(this.getResourceBundle().getText("msgSaved"));
             oDialog.close();
         },
 
         onCancelProduct: function (oEvent) {
-            oEvent.getSource().getParent().close();
+            var oDialog = oEvent.getSource().getParent();
+            if (this._bDialogDirty) {
+                this._confirmDiscardChanges().then(function () {
+                    this._bDialogDirty = false;
+                    oDialog.close();
+                }.bind(this), function () { /* stay open */ });
+            } else {
+                oDialog.close();
+            }
         },
 
         _validateProduct: function (oDialog) {
@@ -145,6 +156,7 @@ sap.ui.define([
                             aProducts.splice(that._iIndex, 1);
                             oProductsModel.setProperty("/products", aProducts);
                             oProductsModel.refresh(true);
+                            that.persistProducts();
 
                             MessageToast.show(that.getResourceBundle().getText("msgDeleted"));
                             that.getModel("appView").setProperty("/layout", "OneColumn");
@@ -164,6 +176,7 @@ sap.ui.define([
                 "/products/" + this._iIndex + "/lastUpdated",
                 new Date().toISOString().slice(0, 10)
             );
+            this.persistProducts();
             MessageToast.show(this.getResourceBundle().getText("msgReordered"));
         }
     });

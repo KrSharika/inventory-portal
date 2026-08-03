@@ -3,49 +3,77 @@
     xmlns="sap.m"
     xmlns:layout="sap.ui.layout.form">
     <Dialog
-        title="{= ${temp>/__isNew} ? ${i18n>dialogAddTitle} : ${i18n>dialogEditTitle} }"
+        id="addEditProductDialog"
         contentWidth="30rem">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="{= ${temp>/__isNew} ? ${i18n>dialogAddTitle} : ${i18n>dialogEditTitle} }" level="H2" />
+                </contentLeft>
+                <contentRight>
+                    <DraftIndicator id="draftIndicator" />
+                </contentRight>
+            </Bar>
+        </customHeader>
         <content>
             <layout:SimpleForm editable="true" layout="ResponsiveGridLayout">
                 <Label text="{i18n>labelName}" required="true" />
-                <Input id="inputName" value="{temp>name}" />
+                <Input id="inputName" value="{temp>name}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelCategory}" required="true" />
-                <Input id="inputCategory" value="{temp>category}" />
+                <Input
+                    id="inputCategory"
+                    value="{temp>category}"
+                    showValueHelp="true"
+                    valueHelpRequest="onValueHelpRequest"
+                    liveChange="onDraftFieldChange">
+                    <customData>
+                        <core:CustomData key="field" value="category" />
+                    </customData>
+                </Input>
 
                 <Label text="{i18n>labelSku}" required="true" />
-                <Input id="inputSku" value="{temp>sku}" />
+                <Input id="inputSku" value="{temp>sku}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelPrice}" required="true" />
-                <Input id="inputPrice" value="{path: 'temp>price', type: 'sap.ui.model.type.Float'}" />
+                <Input id="inputPrice" value="{path: 'temp>price', type: 'sap.ui.model.type.Float'}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelCurrency}" />
-                <Select id="inputCurrency" selectedKey="{temp>currency}">
+                <Select id="inputCurrency" selectedKey="{temp>currency}" change="onDraftFieldChange">
+                    <core:Item key="INR" text="INR" />
                     <core:Item key="USD" text="USD" />
                     <core:Item key="EUR" text="EUR" />
-                    <core:Item key="INR" text="INR" />
                 </Select>
 
                 <Label text="{i18n>labelStock}" required="true" />
-                <Input id="inputStock" value="{path: 'temp>stock', type: 'sap.ui.model.type.Integer'}" />
+                <Input id="inputStock" value="{path: 'temp>stock', type: 'sap.ui.model.type.Integer'}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelReorderThreshold}" />
-                <Input id="inputThreshold" value="{path: 'temp>reorderThreshold', type: 'sap.ui.model.type.Integer'}" />
+                <Input id="inputThreshold" value="{path: 'temp>reorderThreshold', type: 'sap.ui.model.type.Integer'}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelSupplier}" />
-                <Input value="{temp>supplier}" />
+                <Input
+                    id="inputSupplier"
+                    value="{temp>supplier}"
+                    showValueHelp="true"
+                    valueHelpRequest="onValueHelpRequest"
+                    liveChange="onDraftFieldChange">
+                    <customData>
+                        <core:CustomData key="field" value="supplier" />
+                    </customData>
+                </Input>
 
                 <Label text="{i18n>labelWarehouse}" />
-                <Input value="{temp>warehouse}" />
+                <Input value="{temp>warehouse}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelDescription}" />
-                <TextArea value="{temp>description}" rows="3" />
+                <TextArea value="{temp>description}" rows="3" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelImageUrl}" />
-                <Input value="{temp>imageUrl}" />
+                <Input value="{temp>imageUrl}" liveChange="onDraftFieldChange" />
 
                 <Label text="{i18n>labelLastUpdated}" />
-                <DatePicker value="{temp>lastUpdated}" valueFormat="yyyy-MM-dd" displayFormat="medium" />
+                <DatePicker value="{temp>lastUpdated}" valueFormat="yyyy-MM-dd" displayFormat="medium" change="onDraftFieldChange" />
             </layout:SimpleForm>
         </content>
         <buttons>

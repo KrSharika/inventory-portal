@@ -36,7 +36,12 @@ sap.ui.define([
             if (fPrice === undefined || fPrice === null) {
                 return "";
             }
-            var sSymbol = sCurrency === "USD" ? "$" : (sCurrency || "");
+            var mSymbols = {
+                "USD": "$",
+                "INR": "₹",
+                "EUR": "€"
+            };
+            var sSymbol = mSymbols[sCurrency] || (sCurrency ? sCurrency + " " : "");
             return sSymbol + parseFloat(fPrice).toFixed(2);
         },
 

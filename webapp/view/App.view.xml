@@ -5,8 +5,16 @@
     xmlns:m="sap.m"
     displayBlock="true"
     height="100%">
-    <FlexibleColumnLayout
-        id="fcl"
-        layout="{appView>/layout}"
-        backgroundDesign="Solid" />
+    <m:Page id="appPage" title="{i18n>appTitle}" showHeader="true" height="100%">
+        <m:headerContent>
+            <m:Button
+                id="settingsButton"
+                icon="sap-icon://action-settings"
+                tooltip="{i18n>tooltipSettings}"
+                press="onSettingsPress" />
+        </m:headerContent>
+        <m:content>
+            <FlexibleColumnLayout id="fcl" layout="{appView>/layout}" backgroundDesign="Solid" />
+        </m:content>
+    </m:Page>
 </mvc:View>
