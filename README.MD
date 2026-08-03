@@ -127,3 +127,20 @@ inventory-portal/
   - `currencyValue`: formats known currency codes with the correct symbol and two decimals; falls back to the currency code itself when the symbol is unknown; returns an empty string when price is undefined or null
 - Run via: open `webapp/test/unit/unitTests.qunit.html` in BAS, or navigate to `test.html`
  
+ ## Topic Coverage & SAPUI5 Concepts
+ 
+This project serves as a capstone implementation demonstrating core and advanced SAPUI5 technical concepts:
+ 
+| Concept Category | SAPUI5 Features / APIs Covered | Project Implementation |
+| :--- | :--- | :--- |
+| **Layout & Architecture** | `sap.f.FlexibleColumnLayout`, `manifest.json`, `Component.js` | 3-Column layout (`Category` → `Products` → `Detail`), responsive column layout adaptation, base controller inheritance hierarchy. |
+| **Routing & Navigation** | Routing Targets, Pattern Matching, Deep Linking | Route definitions with pattern matching (`/category/{categoryId}/product/{productId}`), parameterized context binding, `NotFound` view handling. |
+| **Data Models & Binding** | `sap.ui.model.json.JSONModel`, Binding Types | 2-way binding for dialog inputs, expression bindings for aggregate counts, element/context binding for details, aggregation binding for lists. |
+| **Internationalization (i18n)** | `ResourceModel`, `ResourceBundle` | Dual-language support (`i18n.properties` for EN, `i18n_de.properties` for DE) with an **in-app live language switcher** without page refresh. |
+| **Theming & Styling** | Theme Manager (`sap.ui.getCore().applyTheme()`), CSS3 | Live light/dark mode theme switcher (SAP Horizon Morning Horizon vs. Evening Horizon), custom header gradient backgrounds. |
+| **UI Reuse & Fragments** | XML Fragments (`sap.ui.xmlfragment`) | Reusable dialog fragments: `AddEditProduct.fragment.xml`, `ViewSettings.fragment.xml`, `ValueHelp.fragment.xml`. |
+| **Data Formatting** | Custom Formatter Module (`formatter.js`) | Dynamic stock status mapping (`Success`, `Warning`, `Error`), currency formatting with symbol fallbacks, localized date formatting. |
+| **Data Operations & Validation** | JSON Model Mutation, `ValueState` Validation | In-memory CRUD & Reorder stock actions; client-side required field and range validation with instant UI feedback. |
+| **User Experience & Feedback** | `sap.m.MessageBox`, `sap.m.MessageToast` | Action feedback, confirmation dialogs prior to item deletion, quick notification toasts on stock reorder. |
+| **Testing & Quality Assurance** | QUnit, UI5 Linter (`.eslintrc.json`) | Isolated unit testing suite for custom formatters (6 unit tests, 12 assertions passing). |
+ 
