@@ -1,0 +1,41 @@
+# NovaMart Inventory & Order Management Portal
+
+A SAPUI5 freestyle application for browsing the NovaMart product catalog,
+managing stock levels, and raising reorder requests. Built as a training
+capstone project — no backend; all data lives in a local JSON model.
+
+## How to Run (SAP Business Application Studio)
+
+1. Open the `inventory-portal` folder as a Dev Space in BAS (Full Stack Cloud
+   Application dev space, or SAPUI5 dev space).
+2. Open a terminal in the project root and install dependencies:
+```bash
+   npm install
+```
+3. Start the app:
+```bash
+   npm start
+```
+   This runs `ui5 serve --open index.html` and opens a live preview.
+4. To test the German locale, append `?sap-language=DE` to the preview URL.
+5. To lint the codebase:
+```bash
+   npm run lint
+```
+
+## Project Structure
+
+inventory-portal/
+└── webapp/
+├── Component.js
+├── manifest.json
+├── index.html
+├── controller/ # App, List, Detail, NotFound, BaseController
+├── view/ # App, List, Detail, NotFound (XML views)
+├── fragment/ # AddEditProduct dialog, ViewSettings dialog
+├── model/ # formatter.js, products.json
+├── i18n/ # i18n.properties (EN, default), i18n_de.properties
+└── css/ # style.css
+
+## Implemented Features
+

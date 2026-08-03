@@ -2,8 +2,9 @@ sap.ui.define([
     "./BaseController",
     "../util/Storage",
     "sap/m/Menu",
-    "sap/m/MenuItem"
-], function (BaseController, Storage, Menu, MenuItem) {
+    "sap/m/MenuItem",
+    "sap/ui/core/Theming"
+], function (BaseController, Storage, Menu, MenuItem, Theming) {
     "use strict";
 
     return BaseController.extend("novamart.inventory.controller.App", {
@@ -25,12 +26,20 @@ sap.ui.define([
                 });
                 this.getView().addDependent(this._oThemeMenu);
             }
+            this._markActiveTheme();
             this._oThemeMenu.openBy(oEvent.getSource());
+        },
+
+        _markActiveTheme: function () {
+            var sActiveTheme = Theming.getTheme();
+            this._oThemeMenu.getItems().forEach(function (oItem) {
+                oItem.setIcon(oItem.getKey() === sActiveTheme ? "sap-icon://accept" : "");
+            });
         },
 
         onThemeSelect: function (oEvent) {
             var sThemeKey = oEvent.getParameter("item").getKey();
-            sap.ui.getCore().applyTheme(sThemeKey);
+            Theming.setTheme(sThemeKey);
             Storage.saveTheme(sThemeKey);
         }
     });

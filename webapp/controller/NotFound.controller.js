@@ -6,7 +6,7 @@ sap.ui.define([
     return BaseController.extend("novamart.inventory.controller.NotFound", {
 
         onInit: function () {
-            this.setModel(this.getModel("i18n"), "i18n");
+           
         },
 
         onNavBack: function () {

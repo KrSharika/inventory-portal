@@ -2,12 +2,27 @@
     controllerName="novamart.inventory.controller.Detail"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
+    xmlns:core="sap.ui.core"
     xmlns:layout="sap.ui.layout.form">
     <Page
         id="detailPage"
-        title="{i18n>detailPageTitle}"
-        showNavButton="{device>/system/phone}"
+        showNavButton="true"
         navButtonPress="onNavBack">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="{i18n>detailPageTitle}" level="H2"/>
+                </contentLeft>
+                <contentRight>
+                    <Button
+                        id="closeDetailButton"
+                        icon="sap-icon://decline"
+                        tooltip="{i18n>tooltipCloseColumn}"
+                        type="Transparent"
+                        press="onNavBack" />
+                </contentRight>
+            </Bar>
+        </customHeader>
         <content>
             <ObjectHeader
                 title="{products>name}"

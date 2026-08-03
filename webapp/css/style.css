@@ -1,0 +1,298 @@
+/* =========================================================
+   NovaMart Inventory — warehouse bin-tag design system
+   ========================================================= */
+
+:root {
+    --ink: #1B222C;
+    --ink-soft: #333C48;
+    --paper: #EFEDE4;
+    --card: #FBFAF6;
+    --steel: #3D5A73;
+    --steel-dark: #2A4155;
+    --amber: #C97A24;
+    --red: #B23A32;
+    --green: #3F6B3F;
+    --line: #D9D4C3;
+    --font-display: "Oswald", "Arial Narrow", sans-serif;
+    --font-body: "Inter", "72", sans-serif;
+    --font-mono: "IBM Plex Mono", "72Mono", monospace;
+}
+
+/* ---- Theme parameter overrides (repaints stock Horizon controls) ---- */
+html[data-sap-ui-theme] {
+    --sapBrandColor: var(--steel);
+    --sapHighlightColor: var(--steel);
+    --sapSelectedColor: var(--steel);
+    --sapBackgroundColor: var(--paper);
+    --sapList_Background: var(--card);
+    --sapObjectHeader_Background: var(--card);
+    --sapButton_Emphasized_Background: var(--steel);
+    --sapButton_Emphasized_BorderColor: var(--steel-dark);
+    --sapPositiveColor: var(--green);
+    --sapCriticalColor: var(--amber);
+    --sapNegativeColor: var(--red);
+    --sapFontFamily: var(--font-body);
+}
+
+body, .sapUiBody {
+    font-family: var(--font-body);
+    background: var(--paper);
+}
+
+/* =========================================================
+   Shell header (App.view.xml customHeader)
+   ========================================================= */
+#appPage .sapMBar {
+    background: var(--ink) !important;
+    border-bottom: none;
+}
+
+#appPage .sapMTitle {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #FFFFFF !important;
+    font-size: 1.1rem;
+}
+
+#appPage .sapMBar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 5px;
+    background-image: repeating-linear-gradient(
+        90deg,
+        var(--steel) 0px, var(--steel) 2px,
+        transparent 2px, transparent 5px,
+        var(--ink-soft) 5px, var(--ink-soft) 6px,
+        transparent 6px, transparent 10px
+    );
+}
+
+#appPage .sapMBar { position: relative; }
+
+#settingsButton.sapMBtn {
+    color: #FFFFFF;
+}
+#settingsButton .sapMBtnIcon {
+    color: #FFFFFF !important;
+}
+
+/* =========================================================
+   Category column — bin tag cards
+   ========================================================= */
+#categoryPage {
+    background: var(--paper);
+}
+
+#categoryPage .sapMTitle,
+#listPage .sapMTitle {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+#categoryList {
+    background: transparent;
+    padding: 0.75rem;
+}
+
+#categoryList .sapMLIB {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: none;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(27, 34, 44, 0.06);
+}
+
+/* barcode stripe signature, top edge of every bin tag */
+#categoryList .sapMLIB::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background-image: repeating-linear-gradient(
+        90deg,
+        var(--ink) 0px, var(--ink) 2px,
+        transparent 2px, transparent 4px,
+        var(--ink) 4px, var(--ink) 5px,
+        transparent 5px, transparent 9px,
+        var(--ink) 9px, var(--ink) 10px,
+        transparent 10px, transparent 12px
+    );
+}
+
+/* perforated edge, like a ticket stub */
+#categoryList .sapMLIB::after {
+    content: "";
+    position: absolute;
+    left: 34px;
+    top: 5px;
+    bottom: 0;
+    width: 0;
+    border-left: 1px dashed var(--line);
+}
+
+#categoryList .sapMLIB .sapMObjLTitle {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    padding-left: 12px;
+}
+
+#categoryList .sapMObjLNumber {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--steel-dark);
+}
+
+#categoryList .sapMLIB:hover {
+    border-color: var(--steel);
+    box-shadow: 0 4px 10px rgba(27, 34, 44, 0.12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    #categoryList .sapMLIB {
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    #categoryList .sapMLIB:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/* =========================================================
+   Products column — ticket rows
+   ========================================================= */
+#listPage .sapMPageHeader,
+#listPage > header {
+    background: var(--ink);
+}
+
+#listPage .sapMBar {
+    background: var(--ink) !important;
+}
+
+#listPage .sapMTitle {
+    color: #FFFFFF !important;
+}
+
+#listPage .sapMText,
+#listPage .sapMSelect {
+    color: #EFEDE4;
+}
+
+#searchField.sapMSF {
+    border-radius: 2px;
+}
+
+#productList .sapMLIB {
+    background: var(--card);
+    border-bottom: 1px dashed var(--line);
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+#productList .sapMLIB:hover {
+    background: #F3F1E8;
+}
+
+#productList .sapMObjLTitle {
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--ink);
+}
+
+#productList .sapMObjLNumber {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+#productList .sapMObjectAttributeText {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: var(--steel-dark);
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   Status badges — recolor to token palette
+   ========================================================= */
+.sapMObjStatusSuccess .sapMObjStatusText,
+.sapMObjStatusSuccess .sapMObjStatusIcon {
+    color: var(--green) !important;
+}
+.sapMObjStatusWarning .sapMObjStatusText,
+.sapMObjStatusWarning .sapMObjStatusIcon {
+    color: var(--amber) !important;
+}
+.sapMObjStatusError .sapMObjStatusText,
+.sapMObjStatusError .sapMObjStatusIcon {
+    color: var(--red) !important;
+}
+
+/* =========================================================
+   Detail column — object header + buttons
+   ========================================================= */
+.sapMObjectHeader {
+    background: var(--card);
+}
+
+.sapMObjectHeader .sapMOHTitleDiv .sapMTitle {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.sapMBtn.sapMBtnEmphasized {
+    background: var(--steel);
+    border-color: var(--steel-dark);
+    border-radius: 2px;
+}
+.sapMBtn.sapMBtnEmphasized:hover {
+    background: var(--steel-dark);
+}
+
+/* =========================================================
+   Scrollbar — quiet, industrial
+   ========================================================= */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--paper);
+}
+::-webkit-scrollbar-thumb {
+    background: #C7C1AE;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--steel);
+}
+
+.novaMartHeaderBar {
+    background: linear-gradient(90deg, #0854A0 0%, #0A6ED1 100%);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.novaMartHeaderTitle {
+    color: #ffffff !important;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.novaMartHeaderCount {
+    color: #ffffff !important;
+    font-weight: 500;
+    opacity: 0.9;
+}

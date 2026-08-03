@@ -4,8 +4,9 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "sap/m/MessageBox",
     "sap/m/MessageToast",
+    "sap/ui/model/resource/ResourceModel",
     "../model/formatter"
-], function (BaseController, JSONModel, Fragment, MessageBox, MessageToast, formatter) {
+], function (BaseController, JSONModel, Fragment, MessageBox, MessageToast, ResourceModel, formatter) {
     "use strict";
 
     var REORDER_BATCH = 50;
@@ -17,16 +18,38 @@ sap.ui.define([
         onInit: function () {
             this.setModel(this.getModel("products"), "products");
             this.setModel(this.getModel("appView"), "appView");
+
+            if (!this.getModel("appView").getProperty("/locale")) {
+                this.getModel("appView").setProperty("/locale", "en");
+            }
+
+            this._oI18nModels = {
+                en: this.getOwnerComponent().getModel("i18n"),
+                de: new ResourceModel({
+                    bundleName: "novamart.inventory.i18n.i18n",
+                    bundleLocale: "de",
+                    fallbackLocale: "en"
+                })
+            };
+
             this.getRouter().getRoute("detail").attachPatternMatched(this._onRouteMatched, this);
         },
 
+        onLanguageChange: function (oEvent) {
+            var sKey = oEvent.getParameter("selectedItem").getKey();
+            this.getOwnerComponent().setModel(this._oI18nModels[sKey], "i18n");
+        },
+
         _onRouteMatched: function (oEvent) {
+            var sCategoryId = oEvent.getParameter("arguments").categoryId;
             var sProductId = oEvent.getParameter("arguments").productId;
             var aProducts = this.getModel("products").getProperty("/products");
             var iIndex = aProducts.findIndex(function (p) { return p.productId === sProductId; });
 
+            this._sCategoryId = sCategoryId;
+
             if (iIndex === -1) {
-                this.getModel("appView").setProperty("/layout", "TwoColumnsBeginExpanded");
+                this.getModel("appView").setProperty("/layout", "ThreeColumnsMidExpanded");
                 this.getRouter().getTargets().display("notFound");
                 return;
             }
@@ -37,12 +60,12 @@ sap.ui.define([
                 model: "products"
             });
 
-            this.getModel("appView").setProperty("/layout", "TwoColumnsBeginExpanded");
+            this.getModel("appView").setProperty("/layout", "ThreeColumnsMidExpanded");
         },
 
         onNavBack: function () {
-            this.getModel("appView").setProperty("/layout", "OneColumn");
-            this.getRouter().navTo("list");
+            this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+            this.getRouter().navTo("products", { categoryId: this._sCategoryId });
         },
 
         onEditProduct: function () {
@@ -58,17 +81,14 @@ sap.ui.define([
                     controller: this
                 }).then(function (oDialog) {
                     oView.addDependent(oDialog);
-                    this._oDraftIndicator = Fragment.byId(oView.getId(), "draftIndicator");
-                    this.attachUnsavedChangesGuard(oDialog);
                     return oDialog;
-                }.bind(this));
+                });
             }
             this._pAddEditDialog.then(function (oDialog) {
                 oDialog.setModel(oTempModel, "temp");
                 oDialog.setBindingContext(oTempModel.createBindingContext("/"), "temp");
-                this.resetDraftState();
                 oDialog.open();
-            }.bind(this));
+            });
         },
 
         onSaveProduct: function (oEvent) {
@@ -84,23 +104,13 @@ sap.ui.define([
             var oProductsModel = this.getModel("products");
             oProductsModel.setProperty("/products/" + this._iIndex, oUpdated);
             oProductsModel.refresh(true);
-            this.persistProducts();
-            this._bDialogDirty = false;
 
             MessageToast.show(this.getResourceBundle().getText("msgSaved"));
             oDialog.close();
         },
 
         onCancelProduct: function (oEvent) {
-            var oDialog = oEvent.getSource().getParent();
-            if (this._bDialogDirty) {
-                this._confirmDiscardChanges().then(function () {
-                    this._bDialogDirty = false;
-                    oDialog.close();
-                }.bind(this), function () { /* stay open */ });
-            } else {
-                oDialog.close();
-            }
+            oEvent.getSource().getParent().close();
         },
 
         _validateProduct: function (oDialog) {
@@ -124,7 +134,7 @@ sap.ui.define([
 
             var oPriceInput = Fragment.byId(sFragmentId, "inputPrice");
             var oStockInput = Fragment.byId(sFragmentId, "inputStock");
-                if (oPriceInput) {
+            if (oPriceInput) {
                 if (isNaN(oData.price) || oData.price < 0) {
                     oPriceInput.setValueState("Error");
                     bValid = false;
@@ -156,11 +166,10 @@ sap.ui.define([
                             aProducts.splice(that._iIndex, 1);
                             oProductsModel.setProperty("/products", aProducts);
                             oProductsModel.refresh(true);
-                            that.persistProducts();
 
                             MessageToast.show(that.getResourceBundle().getText("msgDeleted"));
-                            that.getModel("appView").setProperty("/layout", "OneColumn");
-                            that.getRouter().navTo("list");
+                            that.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+                            that.getRouter().navTo("products", { categoryId: that._sCategoryId });
                         }
                     }
                 }
@@ -176,7 +185,6 @@ sap.ui.define([
                 "/products/" + this._iIndex + "/lastUpdated",
                 new Date().toISOString().slice(0, 10)
             );
-            this.persistProducts();
             MessageToast.show(this.getResourceBundle().getText("msgReordered"));
         }
     });

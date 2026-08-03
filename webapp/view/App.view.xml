@@ -5,11 +5,12 @@
     xmlns:m="sap.m"
     displayBlock="true"
     height="100%">
-    <m:Page id="appPage" title="{i18n>appTitle}" showHeader="true" height="100%">
+    <m:Page id="appPage" title="{i18n>appTitle}" showHeader="true">
         <m:headerContent>
             <m:Button
                 id="settingsButton"
-                icon="sap-icon://action-settings"
+                icon="sap-icon://palette"
+                text="{i18n>buttonTheme}"
                 tooltip="{i18n>tooltipSettings}"
                 press="onSettingsPress" />
         </m:headerContent>

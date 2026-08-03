@@ -1,4 +1,3 @@
-
 {
   "_version": "1.58.0",
   "sap.app": {
@@ -7,7 +6,7 @@
     "title": "{{appTitle}}",
     "description": "{{appDescription}}",
     "applicationVersion": {
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   },
   "sap.ui": {
@@ -37,6 +36,13 @@
       }
     },
     "handleValidation": true,
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
     "models": {
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
@@ -58,37 +64,47 @@
         "controlId": "fcl",
         "controlAggregation": "beginColumnPages",
         "bypassed": {
-          "target": ["list", "notFound"]
-      },
+          "target": ["category", "notFound"]
+        },
         "async": true
       },
       "routes": [
         {
           "pattern": "",
-          "name": "list",
-          "target": "list"
+          "name": "category",
+          "target": ["category"]
         },
         {
-          "pattern": "product/{productId}",
+          "pattern": "category/{categoryId}",
+          "name": "products",
+          "target": ["category", "products"]
+        },
+        {
+          "pattern": "category/{categoryId}/product/{productId}",
           "name": "detail",
-          "target": ["list", "detail"]
+          "target": ["category", "products", "detail"]
         },
         {
           "pattern": "notFound",
           "name": "notFound",
-          "target": ["list", "notFound"]
+          "target": ["category", "notFound"]
         }
       ],
       "targets": {
-        "list": {
+        "category": {
+          "viewName": "Category",
+          "viewId": "category",
+          "controlAggregation": "beginColumnPages"
+        },
+        "products": {
           "viewName": "List",
           "viewId": "list",
-          "controlAggregation": "beginColumnPages"
+          "controlAggregation": "midColumnPages"
         },
         "detail": {
           "viewName": "Detail",
           "viewId": "detail",
-          "controlAggregation": "midColumnPages"
+          "controlAggregation": "endColumnPages"
         },
         "notFound": {
           "viewName": "NotFound",

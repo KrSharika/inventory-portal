@@ -16,23 +16,19 @@ sap.ui.define([
 
         onInit: function () {
             var oList = this.byId("productList");
-            var oProductsModel = this.getModel("products");
-            this.setModel(oProductsModel, "products");
+            this.setModel(this.getModel("products"), "products");
             this.setModel(this.getModel("appView"), "appView");
-            // NOTE: do NOT do this.setModel(this.getModel("i18n"), "i18n") here.
-            // That locks this view to a specific i18n model instance and breaks
-            // propagation when onLanguageChange swaps the model on the Component.
-            // Leave "i18n" inherited from the owner Component so language
-            // switches reach this view (and its bindings) automatically.
-
-            oProductsModel.attachRequestCompleted(this._updateCount.bind(this));
-            this._updateCount();
+            
 
             this._oList = oList;
             this._aSearchFilters = [];
             this._aViewSettingsFilters = [];
+            this._aCategoryFilter = [];
+            this._sCategoryId = null;
 
-            this.getModel("appView").setProperty("/locale", "en");
+            if (!this.getModel("appView").getProperty("/locale")) {
+                this.getModel("appView").setProperty("/locale", "en");
+            }
 
             this._oI18nModels = {
                 en: this.getOwnerComponent().getModel("i18n"),
@@ -42,6 +38,27 @@ sap.ui.define([
                     fallbackLocale: "en"
                 })
             };
+
+            this.getRouter().getRoute("products").attachPatternMatched(this._onRouteMatched, this);
+        },
+
+        _onRouteMatched: function (oEvent) {
+            var sCategoryId = oEvent.getParameter("arguments").categoryId;
+            this._sCategoryId = sCategoryId;
+
+            this.getModel("appView").setProperty("/categoryId", sCategoryId);
+            this.getModel("appView").setProperty("/layout", "TwoColumnsMidExpanded");
+
+            this._aCategoryFilter = [new Filter("category", FilterOperator.EQ, sCategoryId)];
+            this._aSearchFilters = [];
+            this._aViewSettingsFilters = [];
+
+            this._applyAllFilters();
+        },
+
+        onNavBackToCategories: function () {
+            this.getModel("appView").setProperty("/layout", "OneColumn");
+            this.getRouter().navTo("category");
         },
 
         onLanguageChange: function (oEvent) {
@@ -50,9 +67,8 @@ sap.ui.define([
         },
 
         _updateCount: function () {
-            var aProducts = this.getModel("products").getProperty("/products") || [];
             var oBinding = this._oList ? this._oList.getBinding("items") : null;
-            var iCount = oBinding ? oBinding.getLength() : aProducts.length;
+            var iCount = oBinding ? oBinding.getLength() : 0;
             this.getModel("appView").setProperty("/productCount", iCount);
         },
 
@@ -72,7 +88,9 @@ sap.ui.define([
 
         _applyAllFilters: function () {
             var oBinding = this._oList.getBinding("items");
-            var aCombined = this._aSearchFilters.concat(this._aViewSettingsFilters);
+            var aCombined = this._aCategoryFilter
+                .concat(this._aSearchFilters)
+                .concat(this._aViewSettingsFilters);
             oBinding.filter(aCombined);
             this._updateCount();
         },
@@ -144,7 +162,10 @@ sap.ui.define([
             var oItem = oEvent.getParameter("listItem");
             var oContext = oItem.getBindingContext("products");
             var sProductId = oContext.getProperty("productId");
-            this.getRouter().navTo("detail", { productId: sProductId });
+            this.getRouter().navTo("detail", {
+                categoryId: this._sCategoryId,
+                productId: sProductId
+            });
         },
 
         onAddProduct: function () {
@@ -153,10 +174,10 @@ sap.ui.define([
                 __isNew: true,
                 productId: "P-" + Date.now(),
                 name: "",
-                category: "",
+                category: this._sCategoryId || "",
                 sku: "",
                 price: 0,
-                currency: "USD",
+                currency: "INR",
                 stock: 0,
                 reorderThreshold: 5,
                 supplier: "",
@@ -175,17 +196,14 @@ sap.ui.define([
                     controller: this
                 }).then(function (oDialog) {
                     oView.addDependent(oDialog);
-                    this._oDraftIndicator = Fragment.byId(oView.getId(), "draftIndicator");
-                    this.attachUnsavedChangesGuard(oDialog);
                     return oDialog;
-                }.bind(this));
+                });
             }
             this._pAddEditDialog.then(function (oDialog) {
                 oDialog.setModel(oTempModel, "temp");
                 oDialog.setBindingContext(oTempModel.createBindingContext("/"), "temp");
-                this.resetDraftState();
                 oDialog.open();
-            }.bind(this));
+            });
         },
 
         onSaveProduct: function (oEvent) {
@@ -214,23 +232,13 @@ sap.ui.define([
             oProductsModel.setProperty("/products", aProducts);
             oProductsModel.refresh(true);
             this._updateCount();
-            this.persistProducts();
-            this._bDialogDirty = false;
 
             sap.m.MessageToast.show(this.getResourceBundle().getText("msgSaved"));
             oDialog.close();
         },
 
         onCancelProduct: function (oEvent) {
-            var oDialog = oEvent.getSource().getParent();
-            if (this._bDialogDirty) {
-                this._confirmDiscardChanges().then(function () {
-                    this._bDialogDirty = false;
-                    oDialog.close();
-                }.bind(this), function () { /* stay open */ });
-            } else {
-                oDialog.close();
-            }
+            oEvent.getSource().getParent().close();
         },
 
         _validateProduct: function (oDialog) {
