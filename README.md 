@@ -37,5 +37,40 @@ inventory-portal/
 ├── i18n/ # i18n.properties (EN, default), i18n_de.properties
 └── css/ # style.css
 
-## Implemented Features
+## Features Implemented
+
+### Layout: 3-Column FlexibleColumnLayout
+- The app uses `sap.f.FlexibleColumnLayout` in a **3-column configuration**: Category (begin) → Products (mid) → Detail (end)
+- This extends beyond the base 2-column master-detail spec (Section 11 stretch goal: "Category master column → 3-column FCL")
+- Column visibility adjusts automatically based on navigation depth (`OneColumn` → `TwoColumnsMidExpanded` → `ThreeColumnsMidExpanded`)
+- Fully responsive: collapses to a single column on phone width, with back navigation between levels
+
+### Category Page (begin column)
+- Auto-computed category list, derived live from `products.json` (no hardcoded categories)
+- Each category row shows a product count and an aggregate stock-status badge (Available / Low Stock / Out of Stock, computed from the products inside it)
+- Tapping a category navigates into the filtered Products list
+
+### Products Page (mid column)
+- Product list filtered to the selected category, bound to the JSON model
+- Live search by name and category
+- Sort (name / price / stock), Filter (stock status, price range), Group (category) via a reusable ViewSettings dialog fragment
+- Header shows the current category name and a live product count (expression binding)
+- Add button opens the Add/Edit Product dialog fragment
+- Custom styled header bar (centered title, gradient background)
+- **In-app language switcher** (English / Deutsch dropdown) — instant switch with no page reload, applies across all views (Category, Products, Detail, dialogs)
+- **In-app theme switcher** (Light / Dark dropdown) — toggles between SAP Horizon light and dark themes live, using `sap.ui.getCore().applyTheme()`
+
+### Detail Page (end column)
+- Bound via element/context binding from route parameters (`categoryId` + `productId`)
+- Rich ObjectHeader: name, category, price (currency-formatted), SKU, computed stock status
+- Field group: description, supplier, warehouse location, stock quantity, reorder threshold, last-updated date (date-formatted)
+- Edit button (opens the same Add/Edit fragment, pre-filled via two-way binding)
+- Delete button (MessageBox confirmation before removal)
+- Reorder button (increments stock by a fixed batch, MessageToast confirmation)
+
+### Add / Edit Product (Fragment)
+- Single reusable Dialog fragment used for both create and edit flows
+- Two-way binding to a temporary JSON model context (Cancel discards changes cleanly)
+- Client-side validation: required fields (name, category, SKU), non-negative price/stock (typed Float/Integer bindings) — ValueState feedback on invalid inputs
+- Save updates the main JSON model and refreshes list/detail
 
