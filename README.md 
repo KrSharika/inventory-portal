@@ -1,37 +1,92 @@
-# NovaMart Inventory & Order Management Portal
- 
-[![SAPUI5](https://img.shields.io/badge/SAPUI5-1.120%2B-0FA153?style=for-the-badge&logo=sap)](https://ui5.sap.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![Tests](https://img.shields.io/badge/QUnit-12%2F12%20Passing-brightgreen?style=for-the-badge)](webapp/test/unit/unitTests.qunit.html)
- 
-A SAPUI5 freestyle application for browsing the NovaMart product catalog, managing stock levels, and raising reorder requests. Built as a training capstone project — pure client-side SAPUI5 architecture with all data managed in a local JSON model.
- 
-**Repository:** [https://github.com/KrSharika/inventory-portal](https://github.com/KrSharika/inventory-portal)
+# NovaMart - Product Inventory & Order Management Portal
+> Enterprise-grade SAPUI5 Freestyle Master-Detail portal designed for warehouse product inventory management, automated stock alerts, and procurement workflows.
  
 ---
- 
-## 🎓 Topic Coverage & SAPUI5 Concepts
- 
-This project serves as a capstone implementation demonstrating core and advanced SAPUI5 technical concepts:
- 
-| Concept Category | SAPUI5 Features / APIs Covered | Project Implementation |
-| :--- | :--- | :--- |
-| **Layout & Architecture** | `sap.f.FlexibleColumnLayout`, `manifest.json`, `Component.js` | 3-Column layout (`Category` → `Products` → `Detail`), responsive column layout adaptation, base controller inheritance hierarchy. |
-| **Routing & Navigation** | Routing Targets, Pattern Matching, Deep Linking | Route definitions with pattern matching (`/category/{categoryId}/product/{productId}`), parameterized context binding, `NotFound` view handling. |
-| **Data Models & Binding** | `sap.ui.model.json.JSONModel`, Binding Types | 2-way binding for dialog inputs, expression bindings for aggregate counts, element/context binding for details, aggregation binding for lists. |
-| **Internationalization (i18n)** | `ResourceModel`, `ResourceBundle` | Dual-language support (`i18n.properties` for EN, `i18n_de.properties` for DE) with an **in-app live language switcher** without page refresh. |
-| **Theming & Styling** | Theme Manager (`sap.ui.getCore().applyTheme()`), CSS3 | Live light/dark mode theme switcher (SAP Horizon Morning Horizon vs. Evening Horizon), custom header gradient backgrounds. |
-| **UI Reuse & Fragments** | XML Fragments (`sap.ui.xmlfragment`) | Reusable dialog fragments: `AddEditProduct.fragment.xml`, `ViewSettings.fragment.xml`, `ValueHelp.fragment.xml`. |
-| **Data Formatting** | Custom Formatter Module (`formatter.js`) | Dynamic stock status mapping (`Success`, `Warning`, `Error`), currency formatting with symbol fallbacks, localized date formatting. |
-| **Data Operations & Validation** | JSON Model Mutation, `ValueState` Validation | In-memory CRUD & Reorder stock actions; client-side required field and range validation with instant UI feedback. |
-| **User Experience & Feedback** | `sap.m.MessageBox`, `sap.m.MessageToast` | Action feedback, confirmation dialogs prior to item deletion, quick notification toasts on stock reorder. |
-| **Testing & Quality Assurance** | QUnit, UI5 Linter (`.eslintrc.json`) | Isolated unit testing suite for custom formatters (6 unit tests, 12 assertions passing). |
- 
+## 🔗 Project Links & Submission Metadata
+- 📦 **GitHub Repository**: [https://github.com/SaakshiInc/inventory-portal](https://github.com/SaakshiInc/inventory-portal)
+- 🌐 **Live Application URL**: [https://port8080-workspaces-ws-4ac9c.us10.trial.applicationstudio.cloud.sap](https://port8080-workspaces-ws-4ac9c.us10.trial.applicationstudio.cloud.sap)
+- 🧪 **Automated QUnit Tests**: Executable in-app via `[🧪 Run QUnit Tests]` button on the main toolbar
 ---
- 
-## 🚀 Getting Started (SAP Business Application Studio / Local Setup)
- 
-### 1. Clone the repository
+## 🚀 How to Run in SAP Business Application Studio (BAS)
+### Step 1: Open Terminal in BAS
+Open your SAP Business Application Studio workspace terminal and navigate to the project root:
 ```bash
-git clone https://github.com/KrSharika/inventory-portal.git
-cd inventory-portal
+cd /home/user/projects/inventory-portal
+```
+### Step 2: Start the Application Dev Server
+Run the following command to serve the application:
+```bash
+npx serve -l 8080 webapp
+```
+or
+ 
+```bash
+npm start
+```
+Open in Browser:
+   Click the BAS preview notification or open:  
+   `https://port8080-workspaces-ws-4ac9c.us10.trial.applicationstudio.cloud.sap`
+ 
+---
+## 📁 Project Structure
+```
+inventory-portal/
+├── package.json                   # App configuration & start scripts
+├── README.md                      # Documentation & rubric coverage
+└── webapp/                        # SAPUI5 Web Application Source
+    ├── Component.js               # Root component & router setup
+    ├── manifest.json              # Descriptor (models, routes, i18n)
+    ├── index.html                 # OpenUI5 bootstrap entry point
+    ├── css/
+    │   └── style.css              # Custom Fiori Horizon styling
+    ├── i18n/                      # Resource bundles (en, de, hi)
+    ├── model/
+    │   ├── products.json          # 20 authored Indian FMCG items
+    │   ├── formatter.js           # Status, currency & date formatters
+    │   └── StorageManager.js      # LocalStorage browser persistence
+    ├── controller/
+    │   ├── BaseController.js      # Base class with shared helpers
+    │   ├── App.controller.js       # FlexibleColumnLayout shell
+    │   ├── List.controller.js      # Master list (CRUD, search, filter)
+    │   ├── Detail.controller.js    # Detail page & stock adjustments
+    │   └── NotFound.controller.js  # 404 fallback page
+    ├── view/
+    │   ├── App.view.xml           # FlexibleColumnLayout shell view
+    │   ├── List.view.xml          # Master list with KPI summary cards
+    │   ├── Detail.view.xml        # Product detail object page
+    │   └── NotFound.view.xml      # 404 IllustratedMessage view
+    ├── fragment/
+    │   ├── AddEditProduct.fragment.xml    # Reusable Create/Edit dialog
+    │   ├── ViewSettings.fragment.xml      # Sort, Filter & Group dialog
+    │   └── ValueHelpSupplier.fragment.xml # Supplier selection dialog
+    └── test/unit/
+        ├── unitTests.qunit.html   # Standalone QUnit runner
+        ├── unitTests.qunit.js     # QUnit bootstrap loader
+        └── formatterTest.js       # 6 test suites (19 assertions)
+```
+---
+## 🌟 Implemented Features
+- **Executive KPI Dashboard**: 3 real-time interactive tiles (*Total Products*, *Low Stock Alerts*, *Out of Stock Items*).
+- **Flexible Column Layout**: `sap.f.FlexibleColumnLayout` master-detail floorplan with deep-linking support (`#/product/{productId}`).
+- **Data Binding & Formatter Engine**: Demonstrates aggregation, element, expression, property, and two-way binding with 6 custom formatters.
+- **Stock Management & Bulk Reorder**: Inline stock quick adjustments (+1, +10, +25, -1) and multi-select bulk reordering.
+- **CSV Report Generator**: Client-side data export to `.csv` format.
+- **Multi-Language & Theme Support**: Runtime localization switching (English, German, Hindi) and Fiori Horizon Light/Dark themes.
+- **Automated QUnit Testing**: Integrated 6 test suites with 19 passing assertions verifying all formatter logic.
+---
+## 🎯 Topic-Coverage Self-Check Matrix
+| # | Topic Trained | Implementation | Status |
+| :---: | :--- | :--- | :---: |
+| **1** | **UI5 Basics & BAS** | OpenUI5 bootstrap with SAP Horizon theme (`sap_horizon`) in `index.html` | ✅ Verified |
+| **2** | **Component.js** | Extends `UIComponent`, initializes models, routing, and LocalStorage sync | ✅ Verified |
+| **3** | **manifest.json** | Central descriptor for routing targets, models, and i18n bundles | ✅ Verified |
+| **4** | **Views & MVC** | XML Views (`App`, `List`, `Detail`, `NotFound`) extending `BaseController.js` | ✅ Verified |
+| **5** | **Fiori Controls** | `sap.m.Table`, `ObjectHeader`, `ObjectStatus`, `ProgressIndicator`, `GenericTile` | ✅ Verified |
+| **6** | **Layout** | Two-column `sap.f.FlexibleColumnLayout` with full-screen expansion toggle | ✅ Verified |
+| **7** | **JSON Model** | Authored dataset (`products.json`) loaded as primary named model | ✅ Verified |
+| **8** | **Resource Model / i18n** | Externalized text with runtime language switcher (EN, DE, HI) | ✅ Verified |
+| **9** | **Bindings** | Aggregation, element, property, expression, and two-way form binding | ✅ Verified |
+| **10** | **Routing** | Deep-linking `#`, `#/product/{productId}`, and `:all*:` NotFound routes | ✅ Verified |
+| **11** | **Custom Formatters** | `formatter.js` module computing status state/icon, currency (₹), and date | ✅ Verified |
+| **12** | **Fragments** | Reusable `AddEditProduct`, `ViewSettings`, and `ValueHelpSupplier` fragments | ✅ Verified |
+ 
