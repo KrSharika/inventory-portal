@@ -74,3 +74,9 @@ inventory-portal/
 - Client-side validation: required fields (name, category, SKU), non-negative price/stock (typed Float/Integer bindings) — ValueState feedback on invalid inputs
 - Save updates the main JSON model and refreshes list/detail
 
+### Unit Testing (QUnit)
+- QUnit test suite covering `model/formatter.js`, accessible at `test.html`
+- **6 tests / 12 assertions, all passing**:
+  - `statusState`: returns "Error" when stock is exactly 0 (regardless of threshold); returns "Warning" when stock is above 0 but at/below the reorder threshold; returns "Success" when stock is above the reorder threshold
+  - `currencyValue`: formats known currency codes with the correct symbol and two decimals; falls back to the currency code itself when the symbol is unknown; returns an empty string when price is undefined or null
+- Run via: open `webapp/test/unit/unitTests.qunit.html` (or your test runner path) in BAS, or navigate to `test.html`
